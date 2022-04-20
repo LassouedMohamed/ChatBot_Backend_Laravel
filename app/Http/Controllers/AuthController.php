@@ -40,8 +40,9 @@ class AuthController extends Controller
     }
 
     public function logout(){
-        $user = request()->user(); //or Auth::user()
-        // $user->tokens()->where('id', $user->currentAccessToken()->id);
-        return response($user); 
+        // Get user who requested the logout
+        $user = Auth::user();
+        // Revoke current user token
+        $user->tokens()->where('id', $user->currentAccessToken()->id)->delete();
     }
 }

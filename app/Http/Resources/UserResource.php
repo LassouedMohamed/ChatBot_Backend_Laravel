@@ -17,7 +17,7 @@ class UserResource extends JsonResource
         $data['id'] = $this->id;
         $data['name'] = $this->name;
         $data['email'] = $this->email;
-        $data['picture'] = $this->picture;
+        $data['picture'] = isset($this->picture)? $this->picture->full_path : null;
 
         return $data;
     }

@@ -69,7 +69,7 @@ class ConversationController extends Controller
                 'message' =>'required'
             ]);
             $conversation = Conversation::create([
-                'user_id' => 5,
+                'user_id' => Auth::id(),
                 'second_user_id' => $request['user_id']
             ]);
             Message::create([

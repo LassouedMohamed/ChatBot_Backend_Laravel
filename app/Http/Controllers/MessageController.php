@@ -6,7 +6,7 @@ use App\Models\Message;
 use Illuminate\Http\Request;
 use App\Http\Resources\MessageResource;
 use App\Http\Requests\storeMessageRequest;
-
+use Illuminate\Support\Facades\Auth;
 
 class MessageController extends Controller
 {
@@ -42,10 +42,11 @@ class MessageController extends Controller
         $message = new Message();
         $message->body = $request['body'];
         $message->read = false;
-        $message->user_id = $request['user_id'];
+        $message->user_id = Auth::id();
         $message->conversation_id = $request['conversation_id'];
         $message->save();
         return new MessageResource($message);
+        
     }
 
     /**
