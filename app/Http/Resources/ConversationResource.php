@@ -22,7 +22,21 @@ class ConversationResource extends JsonResource
         $data['id'] = $this->id;
         $data['user'] =  auth()->user()->id == $this->user_id ? new UserResource(User::find($this->second_user_id)) :  new UserResource(User::find($this->user_id)) ;
         $data['created_at'] = $this->created_at;
-        $data['messages'] = MessageResource::collection($this->messages);
+        $msg = MessageResource::collection($this->messages);
+        $compteur = count($msg);
+        for($i = 0;$i < $compteur ; $i++){
+            for ($j = $i + 1; $j < $compteur; $j++) {
+                if (isset($msg[$i]->id) && isset($msg[$j]->id) && $msg[$i]->id < $msg[$j]->id){
+                    $temp = $msg[$i];
+                    $msg[$i] = $msg[$j];
+                    $msg[$j] = $temp;
+                }
+            }
+        }
+        $data['messages'] = $msg;
+    
+        // $var = $msg->last();
+        // $data['messages'] = $var != null ? $msg[0]->id : 'echec';
         return $data;
     }
 }
