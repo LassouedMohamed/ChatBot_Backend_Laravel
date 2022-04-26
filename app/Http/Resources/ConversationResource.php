@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Http\Resources\MessageResource;
 use App\Http\Resources\UserResource;
@@ -21,8 +21,8 @@ class ConversationResource extends JsonResource
     {
         $data['id'] = $this->id;
         $data['user'] =  auth()->user()->id == $this->user_id ? new UserResource(User::find($this->second_user_id)) :  new UserResource(User::find($this->user_id)) ;
-        $data['created_at'] = $this->created_at;
-        $msg = MessageResource::collection($this->messages);
+        $data['created_at'] = Carbon::parse($this->created_at)->toDateTimeString();
+        $msg= MessageResource::collection($this->messages);
         $compteur = count($msg);
         for($i = 0;$i < $compteur ; $i++){
             for ($j = $i + 1; $j < $compteur; $j++) {
@@ -33,10 +33,7 @@ class ConversationResource extends JsonResource
                 }
             }
         }
-        $data['messages'] = $msg;
-    
-        // $var = $msg->last();
-        // $data['messages'] = $var != null ? $msg[0]->id : 'echec';
+        $data['messages'] = MessageResource::collection($msg);
         return $data;
     }
 }

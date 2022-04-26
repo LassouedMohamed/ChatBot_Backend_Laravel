@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Resources;
-
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class MessageResource extends JsonResource
@@ -19,8 +19,8 @@ class MessageResource extends JsonResource
 		$data['read'] = $this->read;
 		$data['user_id'] = $this->user_id;
 		$data['conversation_id'] = $this->conversation_id;
-		$data['created_at'] = $this->created_at;
-        $data['updated_at'] = $this->updated_at;
+		$data['created_at'] = Carbon::parse($this->created_at)->toDateTimeString();
+        $data['updated_at'] = Carbon::parse($this->created_at)->toDateTimeString();
 		return $data;
     }
 }
