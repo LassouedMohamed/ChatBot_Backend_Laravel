@@ -39,10 +39,24 @@ class AuthController extends Controller
         return new UserResource($user);
     }
 
-    public function logout(){
-        // Get user who requested the logout
-        $user = Auth::user();
-        // Revoke current user token
-        $user->tokens()->where('id', $user->currentAccessToken()->id)->delete();
+    public function logout(Request $request){
+
+        if (Auth::check()){
+            $user = Auth::user();//or Auth::user()
+            // Revoke current user token
+            $user->tokens()->where('id', $user->currentAccessToken()->id)->delete();
+            return response([
+                'message' => 'token supprimer'
+            ],200);
+        }
+        return response(["message" =>"token introuvable"],404);
+    }
+
+    public function index(Request $request){
+        if(Auth::check()){
+            $users = User::where('id', '!=', auth()->id())->get();
+            return $users;
+        }
+        return response(["message" =>"token introuvable"],404);
     }
 }

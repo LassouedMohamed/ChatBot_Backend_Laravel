@@ -61,25 +61,44 @@ class ConversationController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
-        if (Auth::check()){
-            $request->validate([
-                'user_id'=>'required',
-                'message' =>'required'
-            ]);
-            $conversation = Conversation::create([
-                'user_id' => Auth::id(),
-                'second_user_id' => $request['user_id']
-            ]);
-            Message::create([
-                'user_id' => Auth::id(),
-                'body' => $request['message'],
-                'conversation_id' =>$conversation->id,
-                'read' => false,
-            ]);
 
-            return new ConversationResource($conversation);
+    public function store(Request $request){
+        if (Auth::check()){
+            $conversations = Conversation::where('user_id' ,Auth::id())->orWhere('second_user_id',Auth::id())->get();
+            $bool = false;
+            for ($i =0 ; $i < count($conversations) ; $i++){
+                if( ($conversations[$i]->user_id == $request->user_id) || ($conversations[$i]->second_user_id == $request->user_id) ){
+                    $bool = true;
+                    $conversation = $conversations[$i];
+                    break;
+                }
+            }
+            if($bool){
+                $msg=$conversation->messages;
+                $compteur=count($conversation->messages);
+                for($i = 0;$i < $compteur ; $i++){
+                    for ($j = $i + 1; $j < $compteur; $j++) {
+                        if (isset($msg[$i]->id) && isset($msg[$j]->id) && $msg[$i]->id < $msg[$j]->id){
+                            $temp = $msg[$i];
+                            $msg[$i] = $msg[$j];
+                            $msg[$j] = $temp;
+                        }
+                    }
+                }
+            return response([
+                "data"=> new ConversationResource($conversation)
+            ],200);
+            }else{
+                $request->validate([
+                    'user_id'=>'required',
+                ]);
+                $conversation = Conversation::create([
+                    'user_id' => Auth::id(),
+                    'second_user_id' => $request['user_id']
+                ]);
+
+                return new ConversationResource($conversation);
+            }
         }
         return response([ 'message' => 'error'],403);
 

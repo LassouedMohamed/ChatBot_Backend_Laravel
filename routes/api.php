@@ -24,13 +24,15 @@ Route::post('/register' , [AuthController::class ,'register']);
 
 
 Route::middleware('auth:sanctum')->group(function() {
-    Route::post('conversation' , [ConversationController::class , 'store']);
     Route::get('/user' , function (Request $request) {
         return response(['user'=>$request->user() , 'token' => request()->bearerToken()]);});
+    Route::get('/allUser' , [AuthController::class , 'index']);
     Route::get('conversation' , [ConversationController::class , 'index']);
+    Route::post('conversation' , [ConversationController::class , 'store']);
+    Route::post('conversation/checkConversation' , [ConversationController::class , 'checkConversation']);
     Route::post('conversation/read' , [ConversationController::class , 'makeConversationAsReaded']);
     Route::post('/message' , [MessageController::class , 'store']);
-    Route::get('/logout' , [AuthController::class ,'logout']);
+    Route::post('/logout' , [AuthController::class ,'logout']);
 });
 
 

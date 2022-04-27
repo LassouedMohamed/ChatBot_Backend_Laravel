@@ -40,6 +40,7 @@ class MessageController extends Controller
     public function store(storeMessageRequest $request)
     {
         //  body ,  user_id  ,  conversation_id
+        if(Auth::check()){
         $message = new Message();
         $message->body = $request['body'];
         $message->read = false;
@@ -47,6 +48,7 @@ class MessageController extends Controller
         $message->conversation_id = $request['conversation_id'];
         $message->save();
         return new MessageResource($message);
+    }
         
     }
 
